@@ -1,0 +1,38 @@
+#!/bin/bash -l
+#BSUB -nnodes 1 
+#BSUB -W 30
+#BSUB -q debug
+#BSUB -P syb111
+#BSUB -J hbonds_all
+#BSUB -o hbonds_all.o%J
+
+module unload hsi xalt darshan-runtime
+module list
+
+echo "Starting H bonds counter..."
+
+TLDDIR=/gpfs/alpine/syb111/proj-shared/Projects/Ecoli
+PDBDIR=${TLDDIR}/PDB
+HBONDSDIR=${TLDDIR}/Hbonds
+
+cd $PDBDIR
+
+PROTLIST=`/bin/ls -d P* | xargs`
+#PROTLIST="P00350 P06959"
+#PROTLIST="P0A9M8 P0A9Q7 P0AFG3 P0AFG8 P25516 P27302 P33570 P36683 P76558"
+
+echo "Processing proteins: $PROTLIST"
+
+for p in $PROTLIST
+do
+    echo "Running Gromacs for $p ..."
+    pushd $p
+    ln -s $HBONDSDIR/common/em.mdp
+    jsrun -n 1 -c 1 $TLDDIR/run_Hbonds_count.sh $p &
+    popd
+done
+
+jswait all
+
+
+echo "Finished processing all proteins!"

@@ -1,0 +1,37 @@
+#!/bin/bash -l
+#BSUB -nnodes 1 
+#BSUB -W 30
+#BSUB -q debug
+#BSUB -P syb111
+#BSUB -J sasa_all
+#BSUB -o sasa_all.o%J
+
+module unload hsi xalt darshan-runtime
+module list
+
+echo "Starting SASA analysis..."
+
+TLDDIR=/gpfs/alpine/syb111/proj-shared/Projects/Ecoli
+PDBDIR=${TLDDIR}/PDB
+SASADIR=${TLDDIR}/SASA
+
+cd $PDBDIR
+
+#PROTLIST=`/bin/ls -d P* | xargs`
+PROTLIST="P00350 P06959"
+
+echo "Processing proteins: $PROTLIST"
+
+for p in $PROTLIST
+do
+    echo "Running Gromacs for $p ..."
+    pushd $p
+    ln -s $SASADIR/common/em.mdp
+    jsrun -n 1 -c 1 $SASADIR/run_gmx_SASA.sh $p &
+    popd
+done
+
+jswait all
+
+
+echo "Finished processing all proteins!"
