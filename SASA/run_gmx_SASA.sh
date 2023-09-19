@@ -19,7 +19,8 @@ echo "Processing protein file: $TLDPROT/$PROT"
 
 #pushd $TLDPROT
 
-echo "1" | gmx sasa -f prt_newbox.gro -s em.tpr -or ${PROT}_resarea.xvg
+#echo "1" | gmx sasa -f prt_newbox.gro -s em.tpr -or ${PROT}_resarea.xvg
+echo "1" | gmx sasa -f prt_newbox.gro -s em.tpr -or resarea.xvg
 
 #popd
 

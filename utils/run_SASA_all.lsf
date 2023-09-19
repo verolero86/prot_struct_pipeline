@@ -12,13 +12,14 @@ module list
 echo "Starting SASA analysis..."
 
 TLDDIR=/gpfs/alpine/syb111/proj-shared/Projects/Ecoli
-PDBDIR=${TLDDIR}/PDB
+#PDBDIR=${TLDDIR}/PDB
+PDBDIR=${TLDDIR}/AF2_models_Bill
 SASADIR=${TLDDIR}/SASA
 
 cd $PDBDIR
 
-#PROTLIST=`/bin/ls -d P* | xargs`
-PROTLIST="P00350 P06959"
+PROTLIST=`/bin/ls -d [PQ]* | xargs`
+#PROTLIST="P00350 P06959"
 
 echo "Processing proteins: $PROTLIST"
 
@@ -26,8 +27,8 @@ for p in $PROTLIST
 do
     echo "Running Gromacs for $p ..."
     pushd $p
-    ln -s $SASADIR/common/em.mdp
-    jsrun -n 1 -c 1 $SASADIR/run_gmx_SASA.sh $p &
+    #ln -s $SASADIR/common/em.mdp
+    jsrun -n 1 -c 1 $TLDDIR/run_SASA.sh $p &
     popd
 done
 
